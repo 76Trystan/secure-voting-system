@@ -13,7 +13,7 @@ const sessions = {};
 const generateSessionKey = () => Math.floor(100000 + Math.random() * 900000).toString();
 const generateUserId = () => Math.floor(1000 + Math.random() * 9000).toString();
 
-// --- Routes ---
+// Routes
 
 // Create a new session
 app.post('/create-session', (req, res) => {

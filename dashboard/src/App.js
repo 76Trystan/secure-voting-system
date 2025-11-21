@@ -16,7 +16,7 @@ const App = () => {
   const [showPollCreator, setShowPollCreator] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
 
-  // --- Backend Functions ---
+  // Backend Functions
   const createSession = async () => {
     try {
       const res = await fetch(`${BACKEND_URL}/create-session`, { method: 'POST' });
@@ -110,12 +110,12 @@ const App = () => {
     setSessions(prev => { const newSessions = { ...prev }; delete newSessions[currentSessionKey]; return newSessions; });
   };
 
-  // --- Poll Option Helpers ---
+  // Poll Option Helpers
   const addPollOption = () => setPollOptions([...pollOptions, '']);
   const removePollOption = i => pollOptions.length > 2 && setPollOptions(pollOptions.filter((_, idx) => idx !== i));
   const updatePollOption = (i, val) => setPollOptions(pollOptions.map((opt, idx) => idx === i ? val : opt));
 
-  // --- Fetch Session Periodically ---
+  // Fetch Session Periodically
   useEffect(() => {
     if (!currentSessionKey) return;
     const interval = setInterval(async () => {
@@ -128,7 +128,7 @@ const App = () => {
     return () => clearInterval(interval);
   }, [currentSessionKey]);
 
-  // --- Views ---
+  // Views
   if (view === 'home') {
     return (
       <div className="container">
