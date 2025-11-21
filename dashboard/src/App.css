@@ -1,123 +1,43 @@
-.page {
-  min-height: 100vh;
-  background: #f1f1f1;
-  padding: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.panel {
-  width: 100%;
-  max-width: 480px;
+.container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
   background: white;
-  padding: 30px;
-  border-radius: 14px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-}
-
-.title {
-  text-align: center;
-  font-size: 28px;
-  margin-bottom: 20px;
-}
-
-.subtitle {
-  font-size: 14px;
-  opacity: 0.7;
-}
-
-.divider {
-  text-align: center;
-  margin: 20px 0;
-  color: #888;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-align: center; /* center contents like buttons */
 }
 
 .input {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  margin-bottom: 15px;
+  width: auto;           /* don't stretch full width */
+  min-width: 200px;      /* optional: give a minimum width */
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: inline-block; /* don't stretch */
 }
 
 .btn {
-  width: 100%;
-  padding: 14px;
-  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem;
   border: none;
+  border-radius: 6px;
   cursor: pointer;
-  margin-bottom: 12px;
-  font-weight: bold;
+  display: inline-block;  /* prevents full width */
+  min-width: 120px;       /* optional: makes buttons uniform */
 }
 
-.btn.primary { background: #586aff; color: white; }
-.btn.green { background: #28a745; color: white; }
-.btn.red { background: #cc0000; color: white; }
-.btn.orange { background: #f0a100; color: white; }
-.btn.gray { background: #777; color: white; }
+/* keep colors */
+.btn.primary { background-color: #4f46e5; color: white; }
+.btn.success { background-color: #10b981; color: white; }
+.btn.warning { background-color: #f59e0b; color: white; }
+.btn.danger  { background-color: #ef4444; color: white; }
+.btn.secondary { background-color: #6b7280; color: white; }
 
-.btn.small {
-  width: auto;
-  padding: 8px 14px;
-  margin-left: 10px;
-}
-
-.option {
-  width: 100%;
-  padding: 14px;
-  background: #eee;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  text-align: left;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.option.selected {
-  background: #28a745;
-  color: white;
-}
-
-.row {
-  display: flex;
-  align-items: center;
-}
-
-.row .input {
-  flex: 1;
-}
-
-.poll-builder,
-.poll-results {
-  margin-top: 25px;
-}
-
-.result {
-  background: #f7f7f7;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 12px;
-}
-
-.bar {
-  width: 100%;
-  height: 10px;
-  background: #ddd;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-top: 5px;
-}
-
-.fill {
-  height: 10px;
-  background: #586aff;
-}
-
-.thanks {
-  background: #dff5d8;
-  padding: 20px;
-  border-radius: 10px;
+.divider {
+  margin: 1rem 0;
   text-align: center;
+  font-weight: bold;
+  color: #555;
 }
