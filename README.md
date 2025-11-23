@@ -4,6 +4,12 @@ A secure and private polling system that allows users to participate in anonymou
 
 ---
 
+## App Purpose
+
+As a Student at university I am on the board for a large social/sport club. Each year the club hosts an annual general meeting (AGM) in which all club members vote for a new round board members. This year we face a problem as previous years the voting system setup was easily "rigged" making it difficult for a secure anonymous voting system. This year I decided to take a different approach by creating a web app to tailer the specific needs.
+
+---
+
 ## Features
 
 - Create and join voting sessions with a unique session key  
