@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css'; // Make sure this file exists
 
-const BACKEND_URL = "http://localhost:5000"; // Change to deployed backend URL when live
+const BACKEND_URL = "https://secure-voting-system-ybp8.onrender.com"; // Change to deployed backend URL when live
 
 const App = () => {
   const [view, setView] = useState('home');
