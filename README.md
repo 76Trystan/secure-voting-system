@@ -26,6 +26,8 @@ As a Student at university I am on the board for a large social/sport club. Each
 
 https://secure-voting-system-1.onrender.com/
 
+Note: Render.com hibernates the site when inactive, so may take a minute to full start up
+
 ---
 
 ## Tech Stack
