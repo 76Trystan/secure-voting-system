@@ -1,165 +1,102 @@
 const express = require("express");
 const cors = require("cors");
-const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
-const { v4: uuidv4 } = require("uuid");
-
 const app = express();
+const PORT = process.env.PORT || 5000;
+
 app.use(cors());
-app.use(express.json());
-app.use(helmet());
+app.use(express.json()); // parse JSON bodies
 
-app.use(
-	rateLimit({
-		windowMs: 15 * 60 * 1000,
-		max: 100,
-	})
-);
-
-// ------------------------
-// STORAGE
-// ------------------------
-
+// In-memory sessions (for demo, replace with database for persistence)
 const sessions = {};
 
-// ------------------------
-// HELPERS
-// ------------------------
+// Generate random keys and IDs
+const generateSessionKey = () =>
+	Math.floor(100000 + Math.random() * 900000).toString();
+const generateUserId = () => Math.floor(1000 + Math.random() * 9000).toString();
 
-const sanitize = (str) =>
-	typeof str === "string" ? str.replace(/[<>]/g, "") : "";
+// Routes
 
-const verifyAdmin = (req, res, next) => {
-	const { key, adminToken } = req.body;
-	const session = sessions[key];
-
-	if (!session || session.adminToken !== adminToken) {
-		return res.status(403).json({ error: "Unauthorized" });
-	}
-	next();
-};
-
-// ------------------------
-// ROUTES
-// ------------------------
-
+// Create a new session
 app.post("/create-session", (_req, res) => {
-	const key = uuidv4();
-	const adminToken = uuidv4();
-
+	const key = generateSessionKey();
 	sessions[key] = {
 		key,
-		adminToken,
 		locked: false,
 		users: {},
 		currentPoll: null,
 		pollHistory: [],
+		admin: true,
 	};
-
-	res.json({ key, adminToken });
+	res.json(sessions[key]);
 });
 
+// Join a session
 app.post("/join-session", (req, res) => {
 	const { key } = req.body;
 	const session = sessions[key];
+	if (!session) return res.status(404).json({ error: "Session not found" });
+	if (session.locked) return res.status(403).json({ error: "Session locked" });
 
-	if (!session) return res.status(404).json({ error: "Not found" });
-	if (session.locked)
-		return res.status(403).json({ error: "Locked" });
-
-	const userId = uuidv4();
-
-	session.users[userId] = {
-		id: userId,
-		voted: false,
-		votes: [],
-	};
-
-	res.json({ userId });
+	const userId = generateUserId();
+	session.users[userId] = { id: userId, voted: false, votes: [] };
+	res.json({ session, userId });
 });
 
-app.post("/lock-session", verifyAdmin, (req, res) => {
-	sessions[req.body.key].locked = true;
-	res.json({ success: true });
+// Lock session
+app.post("/lock-session", (req, res) => {
+	const { key } = req.body;
+	if (sessions[key]) sessions[key].locked = true;
+	res.json(sessions[key]);
 });
 
-app.post("/create-poll", verifyAdmin, (req, res) => {
+// Create a poll
+app.post("/create-poll", (req, res) => {
 	const { key, question, options, maxVotes } = req.body;
-	const session = sessions[key];
+	if (!sessions[key])
+		return res.status(404).json({ error: "Session not found" });
 
-	if (!session) return res.status(404).json({ error: "Not found" });
-
-	const cleanOptions = options.map(sanitize);
-
-	session.currentPoll = {
-		question: sanitize(question),
-		options: cleanOptions,
-		maxVotes,
-		votes: {},
-	};
-
-	Object.values(session.users).forEach((u) => {
-		u.voted = false;
-		u.votes = [];
+	const newPoll = { question, options, maxVotes, votes: {}, active: true };
+	Object.keys(sessions[key].users).forEach((uid) => {
+		sessions[key].users[uid].voted = false;
+		sessions[key].users[uid].votes = [];
 	});
-
-	res.json({ success: true });
+	sessions[key].currentPoll = newPoll;
+	res.json(sessions[key]);
 });
 
+// Submit vote
 app.post("/vote", (req, res) => {
 	const { key, userId, selectedOptions } = req.body;
 	const session = sessions[key];
+	if (!session) return res.status(404).json({ error: "Session not found" });
 
-	if (!session) return res.status(404).json({ error: "Not found" });
-
-	const user = session.users[userId];
-	if (!user) return res.status(403).json({ error: "Invalid user" });
-
-	if (user.voted)
-		return res.status(400).json({ error: "Already voted" });
-
-	const poll = session.currentPoll;
-	if (!poll)
-		return res.status(400).json({ error: "No active poll" });
-
-	if (
-		!Array.isArray(selectedOptions) ||
-		selectedOptions.length > poll.maxVotes ||
-		selectedOptions.some((opt) => !poll.options.includes(opt))
-	) {
-		return res.status(400).json({ error: "Invalid vote" });
-	}
-
-	selectedOptions.forEach((opt) => {
-		poll.votes[opt] = (poll.votes[opt] || 0) + 1;
+	selectedOptions.forEach((option) => {
+		session.currentPoll.votes[option] =
+			(session.currentPoll.votes[option] || 0) + 1;
 	});
-
-	user.voted = true;
-	user.votes = selectedOptions;
-
-	res.json({ success: true });
+	session.users[userId].voted = true;
+	session.users[userId].votes = selectedOptions;
+	res.json(session);
 });
 
-app.post("/close-poll", verifyAdmin, (req, res) => {
-	const session = sessions[req.body.key];
+// Close poll
+app.post("/close-poll", (req, res) => {
+	const { key } = req.body;
+	const session = sessions[key];
+	if (!session) return res.status(404).json({ error: "Session not found" });
 
 	session.pollHistory.push(session.currentPoll);
 	session.currentPoll = null;
-
-	res.json({ success: true });
+	res.json(session);
 });
 
+// Get session data
 app.get("/session/:key", (req, res) => {
 	const session = sessions[req.params.key];
-	if (!session) return res.status(404).json({ error: "Not found" });
-
-	res.json({
-		locked: session.locked,
-		currentPoll: session.currentPoll,
-		userCount: Object.keys(session.users).length,
-	});
+	if (!session) return res.status(404).json({ error: "Session not found" });
+	res.json(session);
 });
 
-app.listen(5000, () => {
-	console.log("Server running");
+app.listen(PORT, () => {
+	console.log(`Server running on port ${PORT}`);
 });
