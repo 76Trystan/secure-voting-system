@@ -15,6 +15,7 @@ const App = () => {
 	const [maxVotes, setMaxVotes] = useState(1);
 	const [showPollCreator, setShowPollCreator] = useState(false);
 	const [selectedOptions, setSelectedOptions] = useState([]);
+	const [adminToken, setAdminToken] = useState(null);
 
 	// Backend Functions
 	const createSession = async () => {
@@ -24,6 +25,7 @@ const App = () => {
 			});
 			const data = await res.json();
 			setCurrentSessionKey(data.key);
+			setAdminToken(data.adminToken);
 			setIsAdmin(true);
 			setView("admin");
 		} catch (err) {
@@ -83,6 +85,7 @@ const App = () => {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					key: currentSessionKey,
+					adminToken,
 					question: pollQuestion,
 					options: pollOptions.filter((opt) => opt.trim()),
 					maxVotes,
@@ -103,7 +106,7 @@ const App = () => {
 			await fetch(`${BACKEND_URL}/lock-session`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ key: currentSessionKey }),
+				body: JSON.stringify({ key: currentSessionKey, adminToken }),
 			});
 			alert("Session locked!");
 		} catch (err) {
@@ -117,7 +120,7 @@ const App = () => {
 			await fetch(`${BACKEND_URL}/close-poll`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ key: currentSessionKey }),
+				body: JSON.stringify({ key: currentSessionKey, adminToken }),
 			});
 			setShowPollCreator(false);
 		} catch (err) {
@@ -126,14 +129,24 @@ const App = () => {
 		}
 	};
 
-	const endSession = () => {
+	const endSession = async () => {
 		if (
 			!window.confirm(
 				"Are you sure you want to end this session? All users will be disconnected.",
 			)
 		)
 			return;
+		try {
+			await fetch(`${BACKEND_URL}/end-session`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ key: currentSessionKey, adminToken }),
+			});
+		} catch (err) {
+			console.error(err);
+		}
 		setCurrentSessionKey("");
+		setAdminToken(null);
 		setUserId(null);
 		setView("home");
 		setIsAdmin(false);
