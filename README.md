@@ -18,7 +18,8 @@ Built for organisations that need a lightweight, trustworthy way to run anonymou
 - Users can vote anonymously  
 - Poll results are displayed live to the admin  
 - Close polls and end sessions easily  
-- Responsive and simple UI  
+- Responsive and simple UI
+- Voters can select one or more options per poll via a click-to-toggle interface  
 
 ---
 
@@ -32,7 +33,9 @@ Note: Render.com hibernates the site when inactive, so may take a minute to full
 
 ## Tech Stack
 
-- **Frontend:** React  
-- **Backend:** Node.js, Express  
-- **Styling:** CSS (custom, no Tailwind)  
-- **Communication:** REST API (backend)  
+- **Frontend:** React 19 (Create React App)
+- **Backend:** Node.js, Express 5
+- **Styling:** Custom CSS, Inter (Google Fonts)
+- **Communication:** REST API
+- **Database:** None - all session data is held in memory and lost on server restart
+- **Middleware:** CORS
