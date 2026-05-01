@@ -6,7 +6,7 @@ A secure and private polling system that allows users to participate in anonymou
 
 ## Web App Purpose
 
-As a Student at university I am on the board for a large social/sport club. Each year the club hosts an annual general meeting (AGM) in which all club members vote for a new round board members. This year we face a problem as previous years the voting system setup was easily "rigged" making it difficult for a secure anonymous voting system. This year I decided to take a different approach by creating a web app to tailer the specific needs.
+Built for organisations that need a lightweight, trustworthy way to run anonymous votes in real time, the kind of scenario where existing tools either do too much, cost too much, or simply aren't designed for it. Most popular polling platforms are built around audience engagement or quizzes, not genuine anonymous balloting. This app fills that gap: no accounts, no data retained between sessions, just a clean and fair vote.
 
 ---
 
