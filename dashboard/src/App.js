@@ -535,9 +535,8 @@ const App = () => {
                     <label
                       className={`vote-option${isSelected ? " selected" : ""}`}
                       key={i}
-                      onClick={() => toggleOption(opt)}
                     >
-                      <input type="checkbox" checked={isSelected} onChange={() => {}} />
+                      <input type="checkbox" checked={isSelected} onChange={() => toggleOption(opt)} />
                       <span className="vote-check">
                         {isSelected && (
                           <span className="vote-check-tick">
